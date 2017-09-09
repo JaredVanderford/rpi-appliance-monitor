@@ -13,7 +13,7 @@ from slackclient import SlackClient
 
 def pushbullet(cfg, msg):
     try:
-        data_send = {"type": "note", "title": "VibrationBot", "body": msg}
+        data_send = {"type": "note", "title": device_name, "body": msg}
         requests.post(
             'https://api.pushbullet.com/v2/pushes',
             data=json.dumps(data_send),
@@ -95,10 +95,12 @@ def sensor_switch(x):
     global sensor_on
     sensor_on = GPIO.input(sensor_pin)
     if (sensor_on):
-        print 'Sensor ON'
+        if(not disable_console_logging):
+            print 'Sensor ON'
         last_signal_on_time = time.time()
     else:
-        print 'Sensor OFF'
+        if(not disable_console_logging):
+            print 'Sensor OFF'
         last_signal_off_time = time.time()
 
 
@@ -106,7 +108,8 @@ def heartbeat():
     global appliance_active
     global last_quiet_time
     global sensor_on
-    print 'HB'
+    if(not disable_console_logging):
+        print 'HB'
 
     current_time = time.time()
 
@@ -117,14 +120,14 @@ def heartbeat():
     # Test for appliance off
     if (appliance_active):
         # If there hasn't been an on signal for a while
-        if (current_time - last_signal_on_time > end_seconds):
+        if (current_time - last_signal_on_time > end_seconds and len(end_message)>0):
             appliance_active = False
             send_alert(end_message)
 
     # Test for appliance on
     else:
         # If there hasn't been a quiet period for a while
-        if (current_time - last_quiet_time > begin_seconds):
+        if (current_time - last_quiet_time > begin_seconds and len(start_message)>0):
             appliance_active = True
             send_alert(start_message)
 
