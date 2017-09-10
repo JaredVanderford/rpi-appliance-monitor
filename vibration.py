@@ -110,6 +110,11 @@ def heartbeat():
     global sensor_on
     if(not disable_console_logging):
         print 'HB'
+        if(detailed_debug_messages):
+            print 'Senson statu: ' + sensor_on
+            print 'Last quiet time: '+ last_quiet_time
+            print 'Last signal on time: ' + last_signal_on_time
+            print 'Last signal off time: ' + last_signal_off_time
 
     current_time = time.time()
 
@@ -147,6 +152,7 @@ last_quiet_time = time.time()
 config = SafeConfigParser()
 config.read(sys.argv[1])
 disable_console_logging = config.getboolean('main', 'DISABLE_CONSOLE_LOGGING')
+detailed_debug_messages = config.getboolean('main', 'DETAILED_DEBUG_MESSAGES')
 sensor_pin = config.getint('main', 'SENSOR_PIN')
 begin_seconds = config.getint('main', 'SECONDS_TO_START')
 end_seconds = config.getint('main', 'SECONDS_TO_END')
