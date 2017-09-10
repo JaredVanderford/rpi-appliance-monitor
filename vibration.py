@@ -13,7 +13,7 @@ from slackclient import SlackClient
 
 def pushbullet(cfg, msg):
     try:
-        data_send = {"type": "note", "title": device_name, "body": msg}
+        data_send = {"type": "note", "title": pushbullet_device_name, "body": msg}
         requests.post(
             'https://api.pushbullet.com/v2/pushes',
             data=json.dumps(data_send),
@@ -146,9 +146,11 @@ last_quiet_time = time.time()
 
 config = SafeConfigParser()
 config.read(sys.argv[1])
+disable_console_logging = config.getboolean('main', 'DISABLE_CONSOLE_LOGGING')
 sensor_pin = config.getint('main', 'SENSOR_PIN')
 begin_seconds = config.getint('main', 'SECONDS_TO_START')
 end_seconds = config.getint('main', 'SECONDS_TO_END')
+pushbullet_device_name = config.get('pushbullet', 'DEVICE_NAME')
 pushbullet_api_key = config.get('pushbullet', 'API_KEY')
 pushbullet_api_key2 = config.get('pushbullet', 'API_KEY2')
 start_message = config.get('main', 'START_MESSAGE')
