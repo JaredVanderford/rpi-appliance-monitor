@@ -111,10 +111,10 @@ def heartbeat():
     if(not disable_console_logging):
         print 'HB'
         if(detailed_debug_messages):
-            print 'Senson statu: ' + sensor_on
-            print 'Last quiet time: '+ last_quiet_time
-            print 'Last signal on time: ' + last_signal_on_time
-            print 'Last signal off time: ' + last_signal_off_time
+            print 'Sensor status: ' + str(sensor_on)
+            print 'Last quiet time: '+ str(last_quiet_time)
+            print 'Last signal on time: ' + str(last_signal_on_time)
+            print 'Last signal off time: ' + str(last_signal_off_time)
 
     current_time = time.time()
 
