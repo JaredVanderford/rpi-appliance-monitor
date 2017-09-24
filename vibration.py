@@ -98,28 +98,26 @@ def sensor_switch(x):
         if(not disable_console_logging):
             print 'Sensor ON'
         last_signal_on_time = time.time()
-    else:
-        if(not disable_console_logging):
-            print 'Sensor OFF'
-        last_signal_off_time = time.time()
 
 
 def heartbeat():
     global appliance_active
     global last_quiet_time
     global sensor_on
+    current_time = time.time()
+
     if(not disable_console_logging):
         print 'HB'
         if(detailed_debug_messages):
             print 'Sensor status: ' + str(sensor_on)
-            print 'Last quiet time: '+ str(last_quiet_time)
+            print 'Current time: ' + str(current_time)
+            print 'Last quiet time: ' + str(last_quiet_time)
             print 'Last signal on time: ' + str(last_signal_on_time)
             print 'Last signal off time: ' + str(last_signal_off_time)
-
-    current_time = time.time()
+            print 'Sensor OFF available: ' + str(off_signal_available)
 
     # Test if there's been any quiet lately
-    if ( not sensor_on and current_time - last_signal_on_time > 1):
+    if ( (not sensor_on or not off_signal_available) and current_time - last_signal_on_time > 1):
         last_quiet_time = current_time
 
     # Test for appliance off
@@ -128,6 +126,7 @@ def heartbeat():
         if (current_time - last_signal_on_time > end_seconds and len(end_message)>0):
             appliance_active = False
             send_alert(end_message)
+            sensor_on = False
 
     # Test for appliance on
     else:
@@ -158,6 +157,7 @@ begin_seconds = config.getint('main', 'SECONDS_TO_START')
 end_seconds = config.getint('main', 'SECONDS_TO_END')
 start_message = config.get('main', 'START_MESSAGE')
 end_message = config.get('main', 'END_MESSAGE')
+off_signal_available = config.getboolean('main', 'OFF_SIGNAL_AVAILABLE')
 integrations = SafeConfigParser()
 integrations.read(sys.argv[2])
 pushbullet_device_name = integrations.get('pushbullet', 'DEVICE_NAME')
